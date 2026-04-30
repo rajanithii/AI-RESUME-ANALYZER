@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Resume — ResumeAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="app-page">
+  <div class="ambient"><div class="ambient-orb orb-1"></div><div class="ambient-orb orb-2"></div></div>
+
+  {% include 'partials/app_nav.html' %}
+  {% include 'partials/profile_dropdown.html' %}
+
+  <main class="upload-main">
+    <div class="upload-wrapper">
+
+      <!-- Left Info -->
+      <div class="upload-info-panel">
+        <div class="uip-eyebrow">Step 1 of 1</div>
+        <h1 class="uip-title">Upload Your Resume</h1>
+        <p class="uip-desc">Our AI analyzes your resume and generates a personalized career report in seconds.</p>
+        <div class="uip-features">
+          <div class="uip-feat"><div class="uip-feat-icon cyan-icon">⚡</div><div><div class="uip-feat-title">Instant Skill Extraction</div><div class="uip-feat-desc">80+ skills via hybrid NLP</div></div></div>
+          <div class="uip-feat"><div class="uip-feat-icon violet-icon">🎯</div><div><div class="uip-feat-title">Career Match Scoring</div><div class="uip-feat-desc">Match % for 12 career paths</div></div></div>
+          <div class="uip-feat"><div class="uip-feat-icon amber-icon">📈</div><div><div class="uip-feat-title">Skill Gap Analysis</div><div class="uip-feat-desc">Know exactly what to learn next</div></div></div>
+          <div class="uip-feat"><div class="uip-feat-icon teal-icon">🔒</div><div><div class="uip-feat-title">Private & Secure</div><div class="uip-feat-desc">Your data is never shared</div></div></div>
+        </div>
+      </div>
+
+      <!-- Right Upload Form -->
+      <div class="upload-form-panel glass-card">
+        {% if error %}
+        <div class="alert-error"><span class="alert-icon">⚠</span><span>{{ error }}</span></div>
+        {% endif %}
+
+        <form action="/analyze" method="POST" enctype="multipart/form-data" id="uploadForm">
+          <div class="drop-zone" id="dropZone">
+            <div class="dz-inner">
+              <div class="dz-icon-wrap">
+                <svg class="dz-icon" viewBox="0 0 64 64" fill="none">
+                  <rect x="8" y="12" width="48" height="40" rx="6" stroke="url(#dg)" stroke-width="2" fill="rgba(110,231,247,0.04)"/>
+                  <path d="M22 28h20M22 36h14" stroke="url(#dg)" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M38 8v12l6-6M38 8l-6 6" stroke="url(#dg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <defs><linearGradient id="dg" x1="8" y1="8" x2="56" y2="52"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+                </svg>
+              </div>
+              <div class="dz-title">Drag & drop your resume</div>
+              <div class="dz-sub">or <span class="dz-browse">click to browse</span></div>
+              <div class="dz-formats">
+                <span class="format-pill">PDF</span>
+                <span class="format-pill">DOCX</span>
+                <span class="format-note">Max 10 MB</span>
+              </div>
+            </div>
+            <input type="file" name="resume" id="fileInput" accept=".pdf,.docx" hidden/>
+          </div>
+
+          <div class="file-preview-card" id="filePreview" style="display:none">
+            <div class="fp-icon">📎</div>
+            <div class="fp-info">
+              <div class="fp-name" id="fileName"></div>
+              <div class="fp-size" id="fileSize"></div>
+            </div>
+            <button type="button" class="fp-remove" id="removeFile">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn" disabled>
+            <span id="btnContent">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Analyze Resume
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-panel glass-card">
+      <div class="lp-spinner">
+        <svg viewBox="0 0 80 80" width="72" height="72">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="url(#spinGrad)" stroke-width="6"
+            stroke-dasharray="201" stroke-dashoffset="60" stroke-linecap="round"
+            transform="rotate(-90 40 40)">
+            <animateTransform attributeName="transform" type="rotate" from="-90 40 40" to="270 40 40" dur="1.2s" repeatCount="indefinite"/>
+          </circle>
+          <defs><linearGradient id="spinGrad" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="lp-title">Analyzing Your Resume</div>
+      <div class="lp-subtitle">This takes just a few seconds…</div>
+      <div class="lp-steps">
+        <div class="lp-step active" id="ls1"><div class="ls-dot"></div><span>Parsing resume text</span></div>
+        <div class="lp-step" id="ls2"><div class="ls-dot"></div><span>Extracting skills with NLP</span></div>
+        <div class="lp-step" id="ls3"><div class="ls-dot"></div><span>Matching career paths</span></div>
+        <div class="lp-step" id="ls4"><div class="ls-dot"></div><span>Building your report</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

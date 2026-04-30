@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — ResumeAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="app-page">
+  <div class="ambient"><div class="ambient-orb orb-1"></div><div class="ambient-orb orb-2"></div></div>
+
+  <!-- ── APP NAVBAR ── -->
+  {% include 'partials/app_nav.html' %}
+
+  <!-- Profile Dropdown -->
+  {% include 'partials/profile_dropdown.html' %}
+
+  <main class="app-main">
+
+    <!-- Welcome Header -->
+    <div class="app-header">
+      <div>
+        <h1 class="app-title">
+          Good {{ greeting }},
+          <span class="grad-text">{{ profile.full_name.split()[0] if profile and profile.full_name else user.username }}</span> 👋
+        </h1>
+        <p class="app-subtitle">Ready to unlock your next career opportunity?</p>
+      </div>
+      <a href="/upload" class="btn-primary-glow">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Analyze Resume
+      </a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="dash-stats-row">
+      <div class="dsr-card glass-card">
+        <div class="dsr-icon cyan-icon">📄</div>
+        <div class="dsr-info">
+          <div class="dsr-num">{{ resumes|length }}</div>
+          <div class="dsr-label">Resumes Analyzed</div>
+        </div>
+      </div>
+      <div class="dsr-card glass-card">
+        <div class="dsr-icon violet-icon">🎯</div>
+        <div class="dsr-info">
+          <div class="dsr-num">12</div>
+          <div class="dsr-label">Career Paths Tracked</div>
+        </div>
+      </div>
+      <div class="dsr-card glass-card">
+        <div class="dsr-icon amber-icon">⚡</div>
+        <div class="dsr-info">
+          <div class="dsr-num">80+</div>
+          <div class="dsr-label">Skills in Database</div>
+        </div>
+      </div>
+      <div class="dsr-card glass-card">
+        <div class="dsr-icon teal-icon">🏆</div>
+        <div class="dsr-info">
+          <div class="dsr-num">{{ profile.experience_years if profile and profile.experience_years else '—' }}</div>
+          <div class="dsr-label">Years Experience</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="dash-grid">
+
+      <!-- Upload CTA card -->
+      <div class="dash-card glass-card upload-cta-card">
+        <div class="uc-glow"></div>
+        <div class="uc-content">
+          <div class="uc-icon">📤</div>
+          <h2 class="uc-title">Analyze Your Resume</h2>
+          <p class="uc-desc">Upload your PDF or DOCX resume. Our AI extracts your skills and maps them to career paths in seconds.</p>
+          <a href="/upload" class="btn-primary-glow" style="margin-top:8px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Upload Resume
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Analyses -->
+      <div class="dash-card glass-card recent-card">
+        <div class="rc-header">
+          <div class="rc-title">
+            <span>🕐</span> Recent Analyses
+          </div>
+          <a href="/upload" class="rc-add">+ New</a>
+        </div>
+
+        {% if resumes %}
+        <div class="rc-list">
+          {% for resume in resumes %}
+          <div class="rc-item">
+            <div class="rc-file-icon">
+              {% if resume.filename.endswith('.pdf') %}📕{% else %}📘{% endif %}
+            </div>
+            <div class="rc-info">
+              <div class="rc-filename">{{ resume.filename }}</div>
+              <div class="rc-time">{{ resume.upload_time }}</div>
+            </div>
+            <span class="rc-badge">Analyzed</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="rc-empty">
+          <div class="rce-icon">📂</div>
+          <div class="rce-text">No analyses yet</div>
+          <div class="rce-sub">Upload your first resume to get started</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Profile Summary -->
+      <div class="dash-card glass-card profile-summary-card">
+        <div class="rc-header">
+          <div class="rc-title"><span>👤</span> Your Profile</div>
+          <a href="/profile" class="rc-add">Edit</a>
+        </div>
+        <div class="ps-avatar-row">
+          <div class="ps-avatar">{{ initials }}</div>
+          <div>
+            <div class="ps-name">{{ profile.full_name if profile and profile.full_name else user.username }}</div>
+            <div class="ps-role">{{ profile.job_title if profile and profile.job_title else 'Add your job title →' }}</div>
+          </div>
+        </div>
+        <div class="ps-details">
+          {% if profile and profile.location %}
+          <div class="ps-detail-row">
+            <span class="psd-icon">📍</span>
+            <span>{{ profile.location }}</span>
+          </div>
+          {% endif %}
+          {% if profile and profile.college %}
+          <div class="ps-detail-row">
+            <span class="psd-icon">🎓</span>
+            <span>{{ profile.college }}{% if profile.graduation_year %}, {{ profile.graduation_year }}{% endif %}</span>
+          </div>
+          {% endif %}
+          {% if profile and profile.linkedin %}
+          <div class="ps-detail-row">
+            <span class="psd-icon">🔗</span>
+            <a href="{{ profile.linkedin }}" target="_blank" class="ps-link">LinkedIn Profile</a>
+          </div>
+          {% endif %}
+        </div>
+        {% if not (profile and profile.full_name) %}
+        <a href="/profile" class="ps-complete-btn">Complete your profile →</a>
+        {% endif %}
+      </div>
+
+      <!-- How It Works quick guide -->
+      <div class="dash-card glass-card how-card">
+        <div class="rc-header">
+          <div class="rc-title"><span>💡</span> Quick Guide</div>
+        </div>
+        <div class="how-steps">
+          <div class="hs-step">
+            <div class="hs-num cyan">1</div>
+            <div class="hs-text">
+              <div class="hs-title">Upload Resume</div>
+              <div class="hs-desc">PDF or DOCX format supported</div>
+            </div>
+          </div>
+          <div class="hs-step">
+            <div class="hs-num violet">2</div>
+            <div class="hs-text">
+              <div class="hs-title">AI Extracts Skills</div>
+              <div class="hs-desc">Hybrid NLP detects 80+ skills</div>
+            </div>
+          </div>
+          <div class="hs-step">
+            <div class="hs-num amber">3</div>
+            <div class="hs-text">
+              <div class="hs-title">Get Career Matches</div>
+              <div class="hs-desc">Ranked paths + skill gap map</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

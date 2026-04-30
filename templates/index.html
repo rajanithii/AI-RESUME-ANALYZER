@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ResumeAI — AI Career Intelligence</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="home-page">
+  <div class="ambient">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <path d="M13 1L24 7V19L13 25L2 19V7L13 1Z" stroke="url(#hng)" stroke-width="1.5" fill="rgba(110,231,247,0.08)"/>
+        <circle cx="13" cy="13" r="3.5" fill="url(#hng)"/>
+        <defs><linearGradient id="hng" x1="2" y1="1" x2="24" y2="25"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+      </svg>
+      <span class="brand-name">ResumeAI</span>
+    </div>
+    <div class="nav-links">
+      <a href="/" class="nav-link active">Home</a>
+      <a href="/login" class="nav-link">Sign In</a>
+    </div>
+    <a href="/register" class="btn-nav">Get Started Free →</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="badge-pulse"></span>AI-Powered Career Intelligence</div>
+      <h1 class="hero-title">Turn Your Resume Into Your<br/><span class="title-gradient">Career Roadmap</span></h1>
+      <p class="hero-desc">Upload your resume. Our hybrid NLP engine extracts every skill, scores you against 12 career paths, and shows exactly what to learn next.</p>
+      <div class="hero-cta-row">
+        <a href="/register" class="btn-primary-glow">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Start Free — No Credit Card
+        </a>
+        <a href="/login" class="btn-outline-ghost">Sign In →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">80+</div><div class="stat-label">Skills detected</div></div>
+        <div class="stat-div"></div>
+        <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Career paths</div></div>
+        <div class="stat-div"></div>
+        <div class="stat-item"><div class="stat-num">&lt;3s</div><div class="stat-label">Analysis time</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="dash-preview glass-card">
+        <div class="dp-header">
+          <div class="dp-dots"><span></span><span></span><span></span></div>
+          <div class="dp-title">resume_analysis.json</div>
+          <div class="dp-live"><span class="live-dot"></span>Live</div>
+        </div>
+        <div class="dp-body">
+          <div class="dp-section">
+            <div class="dp-label">Detected Skills</div>
+            <div class="dp-tags">
+              <span class="dp-tag cyan">Python</span><span class="dp-tag violet">Machine Learning</span>
+              <span class="dp-tag teal">SQL</span><span class="dp-tag amber">Docker</span>
+              <span class="dp-tag cyan">TensorFlow</span><span class="dp-tag ghost">+6 more</span>
+            </div>
+          </div>
+          <div class="dp-divider"></div>
+          <div class="dp-section">
+            <div class="dp-label">Career Matches</div>
+            <div class="dp-careers">
+              <div class="dp-career"><span class="dp-career-name">Data Scientist</span><div class="dp-bar-row"><div class="dp-bar-bg"><div class="dp-bar-fill" style="width:82%"></div></div><span class="dp-pct">82%</span></div></div>
+              <div class="dp-career"><span class="dp-career-name">ML Engineer</span><div class="dp-bar-row"><div class="dp-bar-bg"><div class="dp-bar-fill teal" style="width:71%"></div></div><span class="dp-pct">71%</span></div></div>
+              <div class="dp-career"><span class="dp-career-name">AI Engineer</span><div class="dp-bar-row"><div class="dp-bar-bg"><div class="dp-bar-fill violet" style="width:65%"></div></div><span class="dp-pct">65%</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="float-card fc-skills glass-card"><div class="fc-icon">⚡</div><div class="fc-info"><div class="fc-title">7 Skills Found</div><div class="fc-sub">Python, SQL, Docker…</div></div></div>
+      <div class="float-card fc-match glass-card">
+        <div class="fc-ring">
+          <svg viewBox="0 0 60 60" width="52" height="52"><circle cx="30" cy="30" r="22" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6"/><circle cx="30" cy="30" r="22" fill="none" stroke="url(#fcg)" stroke-width="6" stroke-dasharray="138.2" stroke-dashoffset="24.9" stroke-linecap="round" transform="rotate(-90 30 30)"/><defs><linearGradient id="fcg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs></svg>
+          <div class="fc-ring-label">82%</div>
+        </div>
+        <div class="fc-info"><div class="fc-title">Best Match</div><div class="fc-sub">Data Scientist</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section">
+    <div class="section-eyebrow">How It Works</div>
+    <h2 class="section-heading">Three steps to career clarity</h2>
+    <div class="steps-row">
+      <div class="step-card glass-card"><div class="step-num-badge">01</div><div class="step-emoji cyan-glow">📄</div><h3>Upload Resume</h3><p>Drag & drop your PDF or DOCX. Our parser extracts every word of your experience.</p></div>
+      <div class="step-arrow"><svg width="40" height="16" viewBox="0 0 40 16" fill="none"><path d="M0 8h36M30 2l6 6-6 6" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="step-card glass-card"><div class="step-num-badge">02</div><div class="step-emoji violet-glow">🧠</div><h3>AI Extracts Skills</h3><p>Hybrid NLP with keyword matching + spaCy entity recognition identifies 80+ skills.</p></div>
+      <div class="step-arrow"><svg width="40" height="16" viewBox="0 0 40 16" fill="none"><path d="M0 8h36M30 2l6 6-6 6" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="step-card glass-card"><div class="step-num-badge">03</div><div class="step-emoji amber-glow">🎯</div><h3>Get Career Roadmap</h3><p>Ranked career matches with skill gap analysis — know exactly what to learn next.</p></div>
+    </div>
+  </section>
+
+  <section class="marquee-section">
+    <div class="section-eyebrow">12 Career Paths Analyzed</div>
+    <div class="marquee-outer">
+      <div class="marquee-track-wrap">
+        <div class="marquee-inner">
+          <span class="m-pill">Data Scientist</span><span class="m-pill">ML Engineer</span><span class="m-pill">AI Engineer</span>
+          <span class="m-pill">Web Developer</span><span class="m-pill">Backend Developer</span><span class="m-pill">Frontend Developer</span>
+          <span class="m-pill">DevOps Engineer</span><span class="m-pill">Cybersecurity Analyst</span><span class="m-pill">Cloud Engineer</span>
+          <span class="m-pill">Data Analyst</span><span class="m-pill">Software Engineer</span><span class="m-pill">Mobile Developer</span>
+          <span class="m-pill">Data Scientist</span><span class="m-pill">ML Engineer</span><span class="m-pill">AI Engineer</span>
+          <span class="m-pill">Web Developer</span><span class="m-pill">Backend Developer</span><span class="m-pill">Frontend Developer</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-box glass-card">
+      <div class="cta-glow"></div>
+      <h2>Ready to map your career?</h2>
+      <p>Create your free account — it takes less than 30 seconds.</p>
+      <a href="/register" class="btn-primary-glow large">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Create Free Account
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <svg width="18" height="18" viewBox="0 0 26 26" fill="none"><path d="M13 1L24 7V19L13 25L2 19V7L13 1Z" stroke="url(#ff)" stroke-width="1.5" fill="none"/><circle cx="13" cy="13" r="3" fill="url(#ff)"/><defs><linearGradient id="ff" x1="2" y1="1" x2="24" y2="25"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs></svg>
+      ResumeAI
+    </div>
+    <span>Built with Flask · spaCy · Python</span>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
