@@ -4,10 +4,8 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 
-# ── Utils import (works both locally and on Render) ──────────────────────────
 import sys
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-# Make sure the project root is always on the path so `utils` is importable
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
@@ -15,7 +13,6 @@ from utils.resume_parser import parse_resume
 from utils.skill_extractor import extract_skills
 from utils.recommender import recommend_careers
 
-# ── NLTK bootstrap ───────────────────────────────────────────────────────────
 import nltk
 
 def _ensure_nltk(resource_path, download_name):
@@ -26,13 +23,12 @@ def _ensure_nltk(resource_path, download_name):
 
 _ensure_nltk('corpora/stopwords',   'stopwords')
 _ensure_nltk('tokenizers/punkt',    'punkt')
-# newer NLTK (3.8+) also needs punkt_tab
+_ensure_nltk('corpora/brown',       'brown')
 try:
     _ensure_nltk('tokenizers/punkt_tab', 'punkt_tab')
 except Exception:
     pass
 
-# ── Flask app ─────────────────────────────────────────────────────────────────
 app = Flask(__name__,
             template_folder='templates',
             static_folder='static')
@@ -46,10 +42,6 @@ app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 DATABASE = os.path.join(BASE_DIR, "database.db")
-
-# ══════════════════════════════════════════════════════
-#  DATABASE SETUP
-# ══════════════════════════════════════════════════════
 
 def get_db():
     conn = sqlite3.connect(DATABASE, check_same_thread=False)
@@ -101,10 +93,6 @@ def init_db():
 
 init_db()
 
-# ══════════════════════════════════════════════════════
-#  HELPERS
-# ══════════════════════════════════════════════════════
-
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -148,7 +136,6 @@ def serialize_recommendations(recommendations):
             "match_percentage": rec["match_percentage"],
             "matched_skills": matched,
             "missing_skills": missing,
-            # total_matched used in result.html template
             "total_matched": len(matched),
         })
     return result
@@ -156,9 +143,15 @@ def serialize_recommendations(recommendations):
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# ══════════════════════════════════════════════════════
-#  ROUTES
-# ══════════════════════════════════════════════════════
+def render_upload(error=None):
+    user    = get_current_user()
+    profile = get_profile(session["user_id"])
+    return render_template(
+        "upload.html",
+        user=user, profile=profile,
+        initials=get_initials(profile["full_name"] if profile else None, user["username"]),
+        error=error
+    )
 
 @app.route("/")
 def home():
@@ -236,17 +229,17 @@ def dashboard():
 @app.route("/upload")
 @login_required
 def upload():
-    return render_template("upload.html")
+    return render_upload()
 
 @app.route("/analyze", methods=["POST"])
 @login_required
 def analyze():
     if "resume" not in request.files:
-        return redirect(url_for("dashboard"))
+        return render_upload(error="No file selected.")
 
     file = request.files["resume"]
     if not file or not allowed_file(file.filename):
-        return render_template("upload.html", error="Please upload a valid PDF or DOCX file.")
+        return render_upload(error="Please upload a valid PDF or DOCX file.")
 
     filename  = secure_filename(file.filename)
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -255,7 +248,7 @@ def analyze():
     try:
         resume_text = parse_resume(file_path)
         if not resume_text:
-            return render_template("upload.html", error="Could not extract text from your resume. Please try a different file.")
+            return render_upload(error="Could not extract text from your resume. Please try a different file.")
 
         skills          = extract_skills(resume_text)
         recommendations = recommend_careers(skills)
@@ -269,15 +262,15 @@ def analyze():
         conn.commit()
         conn.close()
 
-        session["skills"]           = skills
-        session["recommendations"]  = recs_clean
-        session["filename"]         = filename
+        session["skills"]          = skills
+        session["recommendations"] = recs_clean
+        session["filename"]        = filename
 
         return redirect(url_for("result"))
 
     except Exception as e:
         app.logger.error(f"Analysis error: {e}")
-        return render_template("upload.html", error=f"Analysis failed: {str(e)}")
+        return render_upload(error=f"Analysis failed: {str(e)}")
 
 @app.route("/result")
 @login_required
@@ -336,9 +329,6 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# ══════════════════════════════════════════════════════
-#  RUNNER
-# ══════════════════════════════════════════════════════
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
