@@ -11,7 +11,6 @@
   <div class="ambient"><div class="ambient-orb orb-1"></div><div class="ambient-orb orb-2"></div></div>
 
   {% include 'partials/app_nav.html' %}
-
   {% include 'partials/profile_dropdown.html' %}
 
   <main class="app-main">
@@ -65,11 +64,15 @@
           <div class="uc-icon">📤</div>
           <h2 class="uc-title">Analyze Your Resume</h2>
           <p class="uc-desc">Upload your PDF or DOCX resume. Our AI extracts your skills and maps them to career paths in seconds.</p>
-          
+
           <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data" style="margin-top:20px">
-            <input type="file" name="resume" accept=".pdf,.docx" required style="margin-bottom:10px; font-size: 0.8rem;">
+            <input type="file" name="resume" accept=".pdf,.docx" required
+                   style="margin-bottom:10px; font-size:0.8rem; color: rgba(255,255,255,0.8);">
             <button type="submit" class="btn-primary-glow">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
               Start AI Analysis
             </button>
           </form>
@@ -110,7 +113,7 @@
       <div class="dash-card glass-card profile-summary-card">
         <div class="rc-header">
           <div class="rc-title"><span>👤</span> Your Profile</div>
-          <a href="/profile" class="rc-add">Edit</a>
+          <a href="{{ url_for('profile') }}" class="rc-add">Edit</a>
         </div>
         <div class="ps-avatar-row">
           <div class="ps-avatar">{{ initials }}</div>
