@@ -4,31 +4,29 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 
-# 1. Imports
+# 1. Imports - Fixed for resume_ai_v2/project2 structure
 try:
     from utils.resume_parser import parse_resume
     from utils.skill_extractor import extract_skills
     from utils.recommender import recommend_careers
 except ImportError:
-    from project2.utils.resume_parser import parse_resume
-    from project2.utils.skill_extractor import extract_skills
-    from project2.utils.recommender import recommend_careers
+    # If the above fails, we try the relative path for Render
+    import sys
+    sys.path.append(os.path.abspath(os.path.dirname(_file_)))
+    from utils.resume_parser import parse_resume
+    from utils.skill_extractor import extract_skills
+    from utils.recommender import recommend_careers
 
 import nltk
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+# Ensure NLTK data is downloaded for Render
+nltk.download('stopwords')
+nltk.download('punkt')
 
-# 2. Paths - FIXED WITH DOUBLE UNDERSCORES __file__
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+# 2. Paths - FIXED DOUBLE UNDERSCORES
+BASE_DIR = os.path.abspath(os.path.dirname(_file_))
 
-# 3. Flask Initialization - FIXED WITH DOUBLE UNDERSCORES __name__
-app = Flask(__name__,
+# 3. Flask Initialization - FIXED DOUBLE UNDERSCORES
+app = Flask(_name_,
             template_folder='templates', 
             static_folder='static')      
 
@@ -164,21 +162,30 @@ def dashboard():
 @app.route("/analyze", methods=["POST"])
 @login_required
 def analyze():
-    if "resume" not in request.files: return redirect(url_for("dashboard"))
+    if "resume" not in request.files: 
+        return redirect(url_for("dashboard"))
     file = request.files["resume"]
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(file_path)
+        
+        # ANALYSIS
         resume_text = parse_resume(file_path)
         if not resume_text: return "Error parsing resume."
+        
         skills = extract_skills(resume_text)
         recommendations = recommend_careers(skills)
         recs_clean = serialize_recommendations(recommendations)
+        
+        # SAVE TO DB
         conn = get_db()
-        conn.execute("INSERT INTO resumes (user_id, filename, upload_time) VALUES (?,?,?)", (session["user_id"], filename, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-        conn.commit(); conn.close()
-        session.update({"skills": skills, "recommendations": recs_clean, "filename": filename})
+        conn.execute("INSERT INTO resumes (user_id, filename, upload_time) VALUES (?,?,?)", 
+                     (session["user_id"], filename, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        conn.commit()
+        conn.close()
+        
+        session.update({"skills": list(skills), "recommendations": recs_clean, "filename": filename})
         return redirect(url_for("result"))
     return "Invalid file type."
 
@@ -193,7 +200,7 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# 4. RUNNER - FIXED WITH DOUBLE UNDERSCORES _name_ and _main_
-if __name__ == "__main__":
+# 4. Main Runner - FIXED DOUBLE UNDERSCORES
+if _name_ == "_main_":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
