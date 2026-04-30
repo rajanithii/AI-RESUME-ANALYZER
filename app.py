@@ -14,7 +14,11 @@ from utils.resume_parser import parse_resume
 from utils.skill_extractor import extract_skills
 from utils.recommender import recommend_careers
 
-app = Flask(__name__)
+
+# Explicitly set template and static folder paths
+app = Flask(__name__,
+            template_folder='templates',
+            static_folder='static')
 app.secret_key = "resumeai_ultra_secret_2024_xK9p"
 
 ALLOWED_EXTENSIONS = {"pdf", "docx"}
