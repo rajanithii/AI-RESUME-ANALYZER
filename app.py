@@ -4,7 +4,7 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 
-# 1. Imports - Setup for project2 structure
+# 1. Imports
 try:
     from utils.resume_parser import parse_resume
     from utils.skill_extractor import extract_skills
@@ -24,10 +24,10 @@ try:
 except LookupError:
     nltk.download('punkt')
 
-# 2. Paths - USING DOUBLE UNDERSCORES _file_
+# 2. Paths - FIXED WITH DOUBLE UNDERSCORES __file__
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-# 3. Flask Initialization - USING DOUBLE UNDERSCORES __name__
+# 3. Flask Initialization - FIXED WITH DOUBLE UNDERSCORES __name__
 app = Flask(__name__,
             template_folder='templates', 
             static_folder='static')      
@@ -62,11 +62,10 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Start DB immediately
 init_db()
 
 # ══════════════════════════════════════════════════════
-#  HELPERS & ROUTES (Keep your original logic)
+#  HELPERS & ROUTES
 # ══════════════════════════════════════════════════════
 
 def hash_password(password):
@@ -165,7 +164,7 @@ def dashboard():
 @app.route("/analyze", methods=["POST"])
 @login_required
 def analyze():
-    if "resume" not in request.files: return redirect(request.url)
+    if "resume" not in request.files: return redirect(url_for("dashboard"))
     file = request.files["resume"]
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -194,9 +193,7 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# ══════════════════════════════════════════════════════
-#  MAIN RUNNER - USING DOUBLE UNDERSCORES _name_ AND _main_
-# ══════════════════════════════════════════════════════
+# 4. RUNNER - FIXED WITH DOUBLE UNDERSCORES _name_ and _main_
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
