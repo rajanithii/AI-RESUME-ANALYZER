@@ -12,7 +12,13 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from werkzeug.utils import secure_filename
 from utils.resume_parser import parse_resume
 from utils.skill_extractor import extract_skills
+
 from utils.recommender import recommend_careers
+
+# NLTK downloads (ensure required data is available)
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
 
 
 # Explicitly set template and static folder paths
@@ -21,13 +27,16 @@ app = Flask(__name__,
             static_folder='static')
 app.secret_key = "resumeai_ultra_secret_2024_xK9p"
 
+
 ALLOWED_EXTENSIONS = {"pdf", "docx"}
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-DATABASE = os.path.join(os.path.dirname(__file__), "database.db")
+# Use absolute path for database
+DATABASE = os.path.join(BASE_DIR, "database.db")
 
 
 # ══════════════════════════════════════════════════════
