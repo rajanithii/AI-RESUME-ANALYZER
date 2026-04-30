@@ -1,2 +1,7 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-*
+.venv/
+venv/
+_pycache_/
+project2/utils/_pycache_/
+project2/uploads/*
+!project2/uploads/.gitkeep
+*.pyc
