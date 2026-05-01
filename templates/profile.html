@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — ResumeAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="app-page">
+  <div class="ambient"><div class="ambient-orb orb-1"></div><div class="ambient-orb orb-2"></div></div>
+
+  {% include 'partials/app_nav.html' %}
+  {% include 'partials/profile_dropdown.html' %}
+
+  <main class="app-main">
+
+    <div class="profile-page-header">
+      <div>
+        <h1 class="app-title">Your <span class="grad-text">Profile</span></h1>
+        <p class="app-subtitle">Keep your details up to date — they appear on your dashboard and reports.</p>
+      </div>
+    </div>
+
+    {% if success %}
+    <div class="toast-banner success">
+      <span>✅</span> Profile saved successfully!
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="toast-banner error">
+      <span>⚠</span> {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="profile-layout">
+
+      <!-- Left: Avatar card -->
+      <div class="profile-avatar-panel glass-card">
+        <div class="pap-avatar">{{ initials }}</div>
+        <div class="pap-name">{{ profile.full_name if profile and profile.full_name else user.username }}</div>
+        <div class="pap-role">{{ profile.job_title if profile and profile.job_title else 'No title set' }}</div>
+        <div class="pap-email">{{ user.email }}</div>
+
+        <div class="pap-divider"></div>
+
+        <div class="pap-stats">
+          <div class="pap-stat">
+            <div class="pap-stat-num">{{ profile.experience_years if profile and profile.experience_years else '—' }}</div>
+            <div class="pap-stat-label">Yrs Experience</div>
+          </div>
+          <div class="pap-stat-div"></div>
+          <div class="pap-stat">
+            <div class="pap-stat-num">{{ profile.graduation_year if profile and profile.graduation_year else '—' }}</div>
+            <div class="pap-stat-label">Grad Year</div>
+          </div>
+        </div>
+
+        {% if profile and profile.linkedin %}
+        <a href="{{ profile.linkedin }}" target="_blank" class="pap-link">🔗 LinkedIn</a>
+        {% endif %}
+        {% if profile and profile.github %}
+        <a href="{{ profile.github }}" target="_blank" class="pap-link">🐙 GitHub</a>
+        {% endif %}
+      </div>
+
+      <!-- Right: Edit form -->
+      <div class="profile-form-panel">
+        <form method="POST" action="/profile" class="profile-form">
+
+          <!-- Personal Info -->
+          <div class="pf-section glass-card">
+            <div class="pfs-title">
+              <span class="pfs-icon cyan-icon">👤</span>
+              Personal Information
+            </div>
+            <div class="pf-grid">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">✏</span>
+                  <input type="text" name="full_name" class="form-input"
+                         value="{{ profile.full_name if profile and profile.full_name else '' }}"
+                         placeholder="Your full name"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">📱</span>
+                  <input type="text" name="phone" class="form-input"
+                         value="{{ profile.phone if profile and profile.phone else '' }}"
+                         placeholder="+91 98765 43210"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">📍</span>
+                  <input type="text" name="location" class="form-input"
+                         value="{{ profile.location if profile and profile.location else '' }}"
+                         placeholder="City, Country"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">🎂</span>
+                  <input type="date" name="dob" class="form-input"
+                         value="{{ profile.dob if profile and profile.dob else '' }}"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">⚧</span>
+                  <select name="gender" class="form-input form-select">
+                    <option value="">Select gender</option>
+                    <option value="Male"   {% if profile and profile.gender=='Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if profile and profile.gender=='Female' %}selected{% endif %}>Female</option>
+                    <option value="Other"  {% if profile and profile.gender=='Other' %}selected{% endif %}>Other</option>
+                    <option value="Prefer not to say" {% if profile and profile.gender=='Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group full-w">
+              <label class="form-label">Bio / About You</label>
+              <div class="form-textarea-wrap">
+                <textarea name="bio" class="form-textarea" rows="3"
+                          placeholder="Tell us a little about yourself…">{{ profile.bio if profile and profile.bio else '' }}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="pf-section glass-card">
+            <div class="pfs-title">
+              <span class="pfs-icon violet-icon">🎓</span>
+              Education
+            </div>
+            <div class="pf-grid">
+              <div class="form-group">
+                <label class="form-label">College / University</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">🏫</span>
+                  <input type="text" name="college" class="form-input"
+                         value="{{ profile.college if profile and profile.college else '' }}"
+                         placeholder="Your university"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Degree / Major</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">📜</span>
+                  <input type="text" name="degree" class="form-input"
+                         value="{{ profile.degree if profile and profile.degree else '' }}"
+                         placeholder="e.g. B.Tech Computer Science"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Graduation Year</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">📅</span>
+                  <input type="text" name="graduation_year" class="form-input"
+                         value="{{ profile.graduation_year if profile and profile.graduation_year else '' }}"
+                         placeholder="2024"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Career -->
+          <div class="pf-section glass-card">
+            <div class="pfs-title">
+              <span class="pfs-icon amber-icon">💼</span>
+              Career
+            </div>
+            <div class="pf-grid">
+              <div class="form-group">
+                <label class="form-label">Job Title / Role</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">💼</span>
+                  <input type="text" name="job_title" class="form-input"
+                         value="{{ profile.job_title if profile and profile.job_title else '' }}"
+                         placeholder="e.g. Software Engineer"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Years of Experience</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">⏱</span>
+                  <input type="text" name="experience_years" class="form-input"
+                         value="{{ profile.experience_years if profile and profile.experience_years else '' }}"
+                         placeholder="e.g. 2"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="pf-section glass-card">
+            <div class="pfs-title">
+              <span class="pfs-icon teal-icon">🔗</span>
+              Social Links
+            </div>
+            <div class="pf-grid">
+              <div class="form-group">
+                <label class="form-label">LinkedIn URL</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">🔗</span>
+                  <input type="url" name="linkedin" class="form-input"
+                         value="{{ profile.linkedin if profile and profile.linkedin else '' }}"
+                         placeholder="https://linkedin.com/in/yourname"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">GitHub URL</label>
+                <div class="form-input-wrap">
+                  <span class="fi-icon">🐙</span>
+                  <input type="url" name="github" class="form-input"
+                         value="{{ profile.github if profile and profile.github else '' }}"
+                         placeholder="https://github.com/yourname"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pf-actions">
+            <button type="submit" class="btn-primary-glow">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Save Profile
+            </button>
+            <a href="/dashboard" class="btn-outline-ghost">← Back to Dashboard</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

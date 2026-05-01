@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — ResumeAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="auth-page">
+  <div class="ambient">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <div class="auth-layout">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="auth-left">
+      <a href="/" class="auth-brand">
+        <svg width="28" height="28" viewBox="0 0 26 26" fill="none">
+          <path d="M13 1L24 7V19L13 25L2 19V7L13 1Z" stroke="url(#rl1)" stroke-width="1.5" fill="rgba(110,231,247,0.08)"/>
+          <circle cx="13" cy="13" r="3.5" fill="url(#rl1)"/>
+          <defs><linearGradient id="rl1" x1="2" y1="1" x2="24" y2="25"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+        </svg>
+        <span class="brand-name">ResumeAI</span>
+      </a>
+
+      <div class="auth-left-content">
+        <div class="auth-tagline">
+          Start your<br/>
+          <span class="grad-text">AI-Powered</span><br/>
+          Career Journey
+        </div>
+        <div class="auth-features">
+          <div class="af-item"><span class="af-dot cyan"></span>Free account — no credit card needed</div>
+          <div class="af-item"><span class="af-dot violet"></span>Analyze unlimited resumes</div>
+          <div class="af-item"><span class="af-dot amber"></span>Track your career progress</div>
+          <div class="af-item"><span class="af-dot teal"></span>Personalized skill roadmaps</div>
+        </div>
+      </div>
+
+      <div class="auth-preview glass-card">
+        <div class="ap-label">Skills Detected</div>
+        <div class="ap-tags stacked">
+          <span class="ap-tag">Python</span>
+          <span class="ap-tag violet">Deep Learning</span>
+          <span class="ap-tag teal">Docker</span>
+          <span class="ap-tag amber">SQL</span>
+          <span class="ap-tag">React</span>
+        </div>
+        <div class="ap-label" style="margin-top:16px">Careers Matched</div>
+        <div class="ap-career-mini">
+          <span>🤖 AI Engineer</span>
+          <span class="ap-mini-pct">74%</span>
+        </div>
+        <div class="ap-career-mini dim">
+          <span>💻 ML Engineer</span>
+          <span class="ap-mini-pct">68%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT PANEL ── -->
+    <div class="auth-right">
+      <div class="auth-form-box glass-card">
+        <div class="afb-header">
+          <h1 class="afb-title">Create account</h1>
+          <p class="afb-sub">Join ResumeAI and unlock your career potential</p>
+        </div>
+
+        {% if error %}
+        <div class="auth-alert error">
+          <span>⚠</span> {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/register" class="auth-form" id="registerForm">
+
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <div class="form-input-wrap">
+              <span class="fi-icon">👤</span>
+              <input type="text" name="username" class="form-input"
+                     placeholder="Choose a username" required minlength="3"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email address</label>
+            <div class="form-input-wrap">
+              <span class="fi-icon">✉</span>
+              <input type="email" name="email" class="form-input"
+                     placeholder="you@example.com" required/>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="form-input-wrap">
+                <span class="fi-icon">🔒</span>
+                <input type="password" name="password" id="pwd1"
+                       class="form-input" placeholder="Min 6 characters" required minlength="6"/>
+                <button type="button" class="fi-toggle" id="pwdToggle">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm password</label>
+              <div class="form-input-wrap">
+                <span class="fi-icon">🔒</span>
+                <input type="password" name="confirm" id="pwd2"
+                       class="form-input" placeholder="Repeat password" required/>
+              </div>
+            </div>
+          </div>
+
+          <div class="pwd-strength" id="pwdStrength" style="display:none">
+            <div class="ps-bar"><div class="ps-fill" id="psFill"></div></div>
+            <span class="ps-label" id="psLabel"></span>
+          </div>
+
+          <button type="submit" class="btn-auth" id="regBtn">
+            Create Account
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8h14M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <div class="auth-divider"><span>already a member?</span></div>
+        <p class="auth-switch">
+          Already have an account?
+          <a href="/login" class="auth-link">Sign in →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

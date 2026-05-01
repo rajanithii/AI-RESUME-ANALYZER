@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Results — ResumeAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body class="app-page">
+  <div class="ambient"><div class="ambient-orb orb-1"></div><div class="ambient-orb orb-2"></div></div>
+
+  {% include 'partials/app_nav.html' %}
+  {% include 'partials/profile_dropdown.html' %}
+
+  <main class="result-main">
+
+    <!-- Result header -->
+    <div class="result-header">
+      <div class="result-badge"><span class="rb-dot"></span>Analysis Complete</div>
+      <h1 class="result-title">Your Career Intelligence Report</h1>
+      <p class="result-meta">
+        <span class="meta-file">📎 {{ filename }}</span>
+        <span class="meta-sep">·</span>
+        <span><strong>{{ skills|length }}</strong> skills detected</span>
+        <span class="meta-sep">·</span>
+        <span><strong>{{ recommendations|length }}</strong> career matches</span>
+      </p>
+    </div>
+
+    <!-- Summary row -->
+    {% if recommendations %}
+    {% set top = recommendations[0] %}
+    <div class="summary-row">
+      <div class="summary-card glass-card sc-match">
+        <div class="sc-label">Best Career Match</div>
+        <div class="sc-career">{{ top.career }}</div>
+        <div class="sc-pct-row">
+          <div class="sc-bar-bg"><div class="sc-bar-fill" style="width:{{ top.match_percentage }}%"></div></div>
+          <span class="sc-pct">{{ top.match_percentage }}%</span>
+        </div>
+      </div>
+      <div class="summary-card glass-card">
+        <div class="sc-label">Skills Detected</div>
+        <div class="sc-big-num">{{ skills|length }}</div>
+        <div class="sc-sub">technical &amp; soft skills</div>
+      </div>
+      <div class="summary-card glass-card">
+        <div class="sc-label">Skills to Learn</div>
+        <div class="sc-big-num amber">{{ top.missing_skills|length }}</div>
+        <div class="sc-sub">for top career match</div>
+      </div>
+      <div class="summary-card glass-card sc-ring-card">
+        <div class="sc-label">Match Coverage</div>
+        <div class="sc-ring-wrap">
+          <svg class="sc-ring" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="9"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="url(#scGrad)" stroke-width="9"
+              stroke-dasharray="238.8"
+              stroke-dashoffset="{{ (238.8 * (1 - top.match_percentage / 100))|round(1) }}"
+              stroke-linecap="round" transform="rotate(-90 50 50)"/>
+            <defs><linearGradient id="scGrad" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6EE7F7"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>
+          </svg>
+          <div class="sc-ring-val">{{ top.match_percentage }}%</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Main grid -->
+    <div class="result-grid">
+
+      <!-- Skills -->
+      <section class="r-card glass-card r-skills-card">
+        <div class="r-card-header">
+          <div class="r-card-title"><span class="rct-icon">⚡</span>Detected Skills</div>
+          <span class="r-badge cyan-badge">{{ skills|length }} found</span>
+        </div>
+        {% if skills %}
+        <div class="skills-cloud">
+          {% for skill in skills %}
+          <span class="s-tag" style="animation-delay:{{ loop.index0 * 35 }}ms">{{ skill }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-msg">No skills detected.</div>
+        {% endif %}
+      </section>
+
+      <!-- Top missing skills -->
+      {% if recommendations %}
+      {% set top = recommendations[0] %}
+      <section class="r-card glass-card r-missing-card">
+        <div class="r-card-header">
+          <div class="r-card-title"><span class="rct-icon">📚</span>Skills to Learn for {{ top.career }}</div>
+        </div>
+        {% if top.missing_skills %}
+        <div class="missing-cloud">
+          {% for skill in top.missing_skills %}
+          <span class="m-tag">{{ skill }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="all-good"><span class="ag-icon">🎉</span><span>You have all required skills!</span></div>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      <!-- Career Recommendations -->
+      <section class="r-card glass-card r-careers-card full-span">
+        <div class="r-card-header">
+          <div class="r-card-title"><span class="rct-icon">🎯</span>Career Recommendations</div>
+          <span class="r-badge violet-badge">{{ recommendations|length }} matches</span>
+        </div>
+        {% if recommendations %}
+        <div class="careers-table">
+          {% for rec in recommendations %}
+          <div class="ct-row {% if loop.first %}ct-top{% endif %}">
+            <div class="ct-rank">
+              {% if loop.first %}<span class="rank-crown">🏆</span>
+              {% else %}<span class="rank-num">#{{ loop.index }}</span>{% endif %}
+            </div>
+            <div class="ct-career-info">
+              <div class="ct-name">{{ rec.career }}</div>
+              <div class="ct-matched-tags">
+                {% for s in rec.matched_skills[:5] %}<span class="ct-skill-tag">{{ s }}</span>{% endfor %}
+                {% if rec.matched_skills|length > 5 %}<span class="ct-skill-tag ghost">+{{ rec.matched_skills|length - 5 }}</span>{% endif %}
+              </div>
+            </div>
+            <div class="ct-bar-col">
+              <div class="ct-bar-wrap">
+                <div class="ct-bar-bg">
+                  <div class="ct-bar-fill {% if rec.match_percentage >= 70 %}bar-high{% elif rec.match_percentage >= 40 %}bar-mid{% else %}bar-low{% endif %}"
+                       style="width:{{ rec.match_percentage }}%"></div>
+                </div>
+                <span class="ct-pct {% if rec.match_percentage >= 70 %}pct-high{% elif rec.match_percentage >= 40 %}pct-mid{% else %}pct-low{% endif %}">
+                  {{ rec.match_percentage }}%
+                </span>
+              </div>
+              <div class="ct-stats">
+                <span class="ct-stat-item matched">✓ {{ rec.total_matched }} matched</span>
+                <span class="ct-stat-item missing">✗ {{ rec.missing_skills|length }} missing</span>
+              </div>
+            </div>
+            <div class="ct-missing-col">
+              {% if rec.missing_skills %}
+              <details class="ct-details">
+                <summary>View {{ rec.missing_skills|length }} missing</summary>
+                <div class="ct-missing-list">
+                  {% for s in rec.missing_skills %}<span class="ct-miss-tag">{{ s }}</span>{% endfor %}
+                </div>
+              </details>
+              {% else %}
+              <span class="ct-complete">✅ All skills present</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-msg">No matches found. Add more technical keywords to your resume.</div>
+        {% endif %}
+      </section>
+
+      <!-- Skill Gap -->
+      <section class="r-card glass-card r-gap-card full-span">
+        <div class="r-card-header">
+          <div class="r-card-title"><span class="rct-icon">📈</span>Skill Gap Map</div>
+          <span class="hint-label">Skills to add to unlock more careers</span>
+        </div>
+        {% set ns = namespace(all_missing=[]) %}
+        {% for rec in recommendations %}
+          {% for s in rec.missing_skills %}
+            {% if s not in ns.all_missing %}{% set ns.all_missing = ns.all_missing + [s] %}{% endif %}
+          {% endfor %}
+        {% endfor %}
+        {% if ns.all_missing %}
+        <div class="gap-grid">
+          {% for skill in ns.all_missing[:24] %}
+          <div class="gap-item"><span class="gap-skill-name">{{ skill }}</span><span class="gap-arrow">→</span></div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="all-good"><span class="ag-icon">🎉</span><span>All skills covered!</span></div>
+        {% endif %}
+      </section>
+
+    </div>
+
+    <div class="result-actions-row">
+      <a href="/upload" class="btn-primary-glow">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M1 12v1.5A1.5 1.5 0 002.5 15h11A1.5 1.5 0 0015 13.5V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Analyze Another Resume
+      </a>
+      <a href="/dashboard" class="btn-outline-ghost">← Dashboard</a>
+      <button onclick="window.print()" class="btn-outline-ghost">🖨 Print</button>
+    </div>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

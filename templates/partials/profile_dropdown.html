@@ -1,0 +1,61 @@
+<!-- Profile Dropdown Panel (shown when nav avatar is clicked) -->
+<div class="profile-dropdown" id="profileDropdown">
+  <div class="pd-header">
+    <div class="pd-avatar">{{ initials }}</div>
+    <div class="pd-info">
+      <div class="pd-name">{{ profile.full_name if profile and profile.full_name else user.username }}</div>
+      <div class="pd-email">{{ user.email }}</div>
+    </div>
+  </div>
+
+  {% if profile %}
+  <div class="pd-details">
+    {% if profile.job_title %}
+    <div class="pd-row">
+      <span class="pd-icon">💼</span>
+      <span>{{ profile.job_title }}{% if profile.experience_years %} · {{ profile.experience_years }} yrs{% endif %}</span>
+    </div>
+    {% endif %}
+    {% if profile.location %}
+    <div class="pd-row">
+      <span class="pd-icon">📍</span>
+      <span>{{ profile.location }}</span>
+    </div>
+    {% endif %}
+    {% if profile.college %}
+    <div class="pd-row">
+      <span class="pd-icon">🎓</span>
+      <span>{{ profile.college }}{% if profile.degree %} — {{ profile.degree }}{% endif %}</span>
+    </div>
+    {% endif %}
+    {% if profile.bio %}
+    <div class="pd-bio">{{ profile.bio[:100] }}{% if profile.bio|length > 100 %}…{% endif %}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="pd-links">
+    {% if profile and profile.linkedin %}
+    <a href="{{ profile.linkedin }}" target="_blank" class="pd-link-btn">
+      <span>🔗</span> LinkedIn
+    </a>
+    {% endif %}
+    {% if profile and profile.github %}
+    <a href="{{ profile.github }}" target="_blank" class="pd-link-btn">
+      <span>🐙</span> GitHub
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="pd-actions">
+    <a href="/profile" class="pd-action-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 13c0-2.761 2.686-4 6-4s6 1.239 6 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Edit Profile
+    </a>
+    <a href="/logout" class="pd-action-btn logout">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 13H2a1 1 0 01-1-1V2a1 1 0 011-1h3M9 10l4-4-4-4M13 6H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sign Out
+    </a>
+  </div>
+</div>
+<div class="pd-backdrop" id="pdBackdrop"></div>
